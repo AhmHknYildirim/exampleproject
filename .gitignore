@@ -16,7 +16,7 @@ __pycache__/
 /static/
 
 # Env / Secrets
-.env
+.env.docker
 
 # Virtual env
 .venv/

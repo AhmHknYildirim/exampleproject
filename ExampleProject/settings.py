@@ -7,11 +7,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # === ENV ===
 env = environ.Env()
-ENV_FILE = BASE_DIR / ".env"
+ENV_FILE = BASE_DIR / ".env.docker"
 if ENV_FILE.exists():
     environ.Env.read_env(str(ENV_FILE))
 else:
-    print(f"⚠️  WARNING: .env not found at: {ENV_FILE}")
+    print(f"⚠️  WARNING: .env.docker not found at: {ENV_FILE}")
 
 # === SECURITY ===
 SECRET_KEY = env("DJANGO_SECRET_KEY", default="dev-only-secret-key")
@@ -107,9 +107,10 @@ TIME_ZONE = "Europe/Istanbul"
 USE_I18N = True
 USE_TZ = True
 
-# === STATIC / MEDIA ===
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"
 #STATICFILES_DIRS = [BASE_DIR / "static"]
 
 MEDIA_URL = "media/"
