@@ -28,8 +28,4 @@ done
 python manage.py collectstatic --noinput
 python manage.py migrate --noinput
 
-if [ -f "src/apps/core/fixtures/statuses.json" ]; then
-  python manage.py loaddata src/apps/core/fixtures/statuses.json || true
-fi
-
 python manage.py runserver 0.0.0.0:8000
