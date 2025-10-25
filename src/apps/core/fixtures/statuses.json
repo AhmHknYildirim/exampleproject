@@ -1,0 +1,16 @@
+[
+  {"model":"core.repairsstatus","fields":{"repair_status_text":"Pending","repair_status_align":10}},
+  {"model":"core.repairsstatus","fields":{"repair_status_text":"Approved","repair_status_align":20}},
+  {"model":"core.repairsstatus","fields":{"repair_status_text":"Completed","repair_status_align":30}},
+  {"model":"core.repairsstatus","fields":{"repair_status_text":"Paid","repair_status_align":40}},
+
+  {"model":"core.paymentsstatus","fields":{"payment_status_text":"Initiated","payment_status_align":10}},
+  {"model":"core.paymentsstatus","fields":{"payment_status_text":"Verified","payment_status_align":20}},
+  {"model":"core.paymentsstatus","fields":{"payment_status_text":"Failed","payment_status_align":90}},
+  {"model":"core.paymentsstatus","fields":{"payment_status_text":"Refunded","payment_status_align":95}},
+
+  {"model":"core.rentalsstatus","fields":{"rental_status_text":"Booked","rental_status_align":10}},
+  {"model":"core.rentalsstatus","fields":{"rental_status_text":"Active","rental_status_align":20}},
+  {"model":"core.rentalsstatus","fields":{"rental_status_text":"Returned","rental_status_align":30}},
+  {"model":"core.rentalsstatus","fields":{"rental_status_text":"Canceled","rental_status_align":90}}
+]

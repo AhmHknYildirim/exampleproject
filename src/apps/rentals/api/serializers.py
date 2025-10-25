@@ -44,7 +44,7 @@ class RentalSerializer(serializers.ModelSerializer):
         ret = attrs.get("return_date")
         if ret and self.instance:
             if ret < self.instance.rental_date:
-                raise serializers.ValidationError({"return_date": "Return date cannot be earlier than rental date."})
+                raise serializers.ValidationError({"return_date": "Return date cannot be earlier than rentals date."})
         return attrs
 
 

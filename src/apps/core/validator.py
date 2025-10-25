@@ -24,23 +24,23 @@ def _is_terminal(status_text: str) -> bool:
 def validate_repair_transition(instance: RepairOrders, target_status: RepairsStatus):
     cur = instance.status
     tgt = target_status
-    if _is_terminal(cur.payment_status_text):
-        raise ValidationError(f"'{cur.payment_status_text}' is terminal; cannot change.")
+    if _is_terminal(cur.repair_status_text):
+        raise ValidationError(f"'{cur.repair_status_text}' is terminal; cannot change.")
 
-    if tgt.payment_status_text.lower() == "paid":
+    if tgt.repair_status_text.lower() == "paid":
         raise ValidationError("You cannot set 'Paid' manually. Use payment verification flow.")
 
-    _ensure_next_step(cur.payment_status_align, tgt.payment_status_align, one_step=True)
+    _ensure_next_step(cur.repair_status_align, tgt.repair_status_align, one_step=True)
 
 
 def apply_completed_timestamp_if_needed(instance: RepairOrders, target_status: RepairsStatus):
-    if target_status.payment_status_text.lower() == "completed" and instance.completed_at is None:
+    if target_status.repair_status_text.lower() == "completed" and instance.completed_at is None:
         instance.completed_at = timezone.now()
 
 
 def validate_payment_initiate(repair: RepairOrders):
     cur = repair.status
-    if cur.payment_status_text.lower() != "completed":
+    if cur.repair_status_text.lower() != "completed":
         raise ValidationError("Payment can be initiated only after repair is COMPLETED.")
 
     existing = getattr(repair, "payment", None)
@@ -65,15 +65,15 @@ def validate_rental_transition(rental: Rentals, target_status: RentalsStatus):
     cur = rental.status
     tgt = target_status
 
-    cur_txt = cur.payment_status_text.lower()
-    tgt_txt = tgt.payment_status_text.lower()
+    cur_txt = cur.rental_status_text.lower()
+    tgt_txt = tgt.rental_status_text.lower()
 
     if cur_txt == "booked" and tgt_txt in {"active", "canceled"}:
-        _ensure_next_step(cur.payment_status_align, tgt.payment_status_align, one_step=False)
+        _ensure_next_step(cur.rental_status_align, tgt.rental_status_align, one_step=False)
         return
 
     if cur_txt == "active" and tgt_txt == "returned":
-        _ensure_next_step(cur.payment_status_align, tgt.payment_status_align, one_step=True)
+        _ensure_next_step(cur.rental_status_align, tgt.rental_status_align, one_step=True)
         return
 
-    raise ValidationError(f"Invalid rental transition: {cur.payment_status_text} -> {tgt.payment_status_text}")
+    raise ValidationError(f"Invalid rental transition: {cur.rental_status_text} -> {tgt.rental_status_text}")
