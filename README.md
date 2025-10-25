@@ -55,6 +55,7 @@ python manage.py makemigrations
 python manage.py migrate
 
 python manage.py loaddata src/apps/core/fixtures/statuses.json
+python manage.py loaddata src/apps/core/fixtures/sample_data.json
 python manage.py runserver
 ```
 ### Docker
@@ -73,6 +74,8 @@ POSTGRES_PORT=5432
 ```
 docker compose down -v
 docker compose up --build
+docker compose exec web python manage.py loaddata src/apps/core/fixtures/statuses.json
+docker compose exec web python manage.py loaddata src/apps/core/fixtures/sample_data.json
 ```
 
 ### Swagger UI
