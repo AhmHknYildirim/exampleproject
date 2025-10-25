@@ -57,6 +57,23 @@ python manage.py migrate
 python manage.py loaddata src/apps/core/fixtures/statuses.json
 python manage.py runserver
 ```
+### Docker
+.env.docker
+DJANGO_SECRET_KEY=testprojectsecretkey21234567890
+DJANGO_DEBUG=True
+DJANGO_ALLOWED_HOSTS=127.0.0.1,localhost
+DJANGO_CSRF_TRUSTED_ORIGINS=http://127.0.0.1:8000,http://localhost:8000
+
+POSTGRES_DB=localdb
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
+
+```
+docker compose down -v
+docker compose up --build
+```
 
 ### Swagger UI
 http://127.0.0.1:8000/api/docs/
