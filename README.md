@@ -25,19 +25,19 @@ src/
 
 ## 🚀 Setup Instructions
 
-### 1️⃣ Clone the Repository
+### Clone the Repository
 ```bash
 git clone https://github.com/AhmHknYildirim/exampleproject.git
 cd vehicle-rental-api
 ```
 
-Create Virtual Environment
+### Create Virtual Environment
 ```bash
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
-Example .env file:
+### Example .env file:
 
 DJANGO_SECRET_KEY=/*/
 DJANGO_DEBUG=True
@@ -57,11 +57,13 @@ python manage.py migrate
 python manage.py loaddata src/apps/core/fixtures/statuses.json
 python manage.py runserver
 ```
-Swagger UI → http://127.0.0.1:8000/api/docs/
+
+### Swagger UI
+http://127.0.0.1:8000/api/docs/
 
 You must run loaddata statuses.json before using repair or payment endpoints.
 
-EXAMPLE USAGE
+### EXAMPLE USAGE
 POST /api/v1/vehicles/
 {
   "text": "Tesla",
