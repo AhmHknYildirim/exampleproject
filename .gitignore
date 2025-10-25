@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.eggs/
+
+# Django
+*.log
+*.pot
+*.mo
+/media/
+/staticfiles/        # STATIC_ROOT çıktısı varsa bunu kullanın
+/static/
+
+# Env / Secrets
+.env
+
+# Virtual env
+.venv/
+venv/
+env/
+
+# Test & coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# IDE & Editor
+.idea/
+.vscode/
+*.code-workspace
+
+# OS
+.DS_Store
+Thumbs.db
