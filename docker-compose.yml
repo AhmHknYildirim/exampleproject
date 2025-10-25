@@ -12,6 +12,37 @@ services:
       - media_volume:/app/media
     depends_on:
       - db
+      - redis
+
+  worker:
+    build: .
+    container_name: celery_worker
+    command: celery -A ExampleProject worker -l info
+    env_file:
+      - .env.docker
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - .:/app
+
+  beat:
+    build: .
+    container_name: celery_beat
+    command: celery -A ExampleProject beat -l info
+    env_file:
+      - .env.docker
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - .:/app
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
 
   db:
     image: postgres:15

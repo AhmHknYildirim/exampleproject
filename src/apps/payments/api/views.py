@@ -1,8 +1,9 @@
-# src/apps/payments/api/views_viewset.py
-from rest_framework import viewsets, filters, status
+from rest_framework import viewsets, filters, status, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiResponse
+from celery.result import AsyncResult
 
 from src.apps.core.models import Payments
 from .serializers import (
@@ -10,7 +11,7 @@ from .serializers import (
     PaymentInitiateSerializer,
     PaymentTransitionSerializer,
 )
-
+from src.apps.payments.tasks import verify_payment_and_mark_repair_paid
 
 class PaymentViewSet(viewsets.ModelViewSet):
     queryset = (
@@ -20,6 +21,7 @@ class PaymentViewSet(viewsets.ModelViewSet):
         .order_by("-payment_date", "-id")
     )
     serializer_class = PaymentSerializer
+    permission_classes = [permissions.AllowAny] #or IsAuthenticated
 
     filter_backends = (filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend)
     search_fields = (
@@ -40,6 +42,8 @@ class PaymentViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == "create":
             return PaymentInitiateSerializer
+        if self.action == "transition":
+            return PaymentTransitionSerializer
         return PaymentSerializer
 
     @action(detail=True, methods=["post"], url_path="transition")
@@ -49,3 +53,32 @@ class PaymentViewSet(viewsets.ModelViewSet):
         ser.is_valid(raise_exception=True)
         ser.save()
         return Response(PaymentSerializer(payment).data, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        summary="Trigger async verification for this payment’s repair",
+        responses={202: OpenApiResponse(description="Task accepted")},
+        tags=["payments", "tasks"],
+    )
+    @action(detail=True, methods=["post"], url_path="verify-async")
+    def verify_async(self, request, pk=None):
+        payment = self.get_object()
+        task = verify_payment_and_mark_repair_paid.delay(payment.repair_id)
+        return Response(
+            {"message": "Task accepted", "task_id": task.id, "repair_id": payment.repair_id},
+            status=status.HTTP_202_ACCEPTED,
+        )
+
+    @extend_schema(
+        parameters=[OpenApiParameter(name="task_id", required=True, location=OpenApiParameter.PATH, type=str)],
+        summary="Get Celery task status/result",
+        tags=["tasks"],
+    )
+    @action(detail=False, methods=["get"], url_path=r"tasks/(?P<task_id>[^/.]+)")
+    def task_status(self, request, task_id=None):
+        res = AsyncResult(task_id)
+        payload = {"task_id": task_id, "status": res.status}
+        if res.status == "SUCCESS":
+            payload["result"] = res.result
+        if res.status == "FAILURE":
+            payload["error"] = str(res.result)
+        return Response(payload)

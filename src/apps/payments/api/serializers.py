@@ -138,18 +138,16 @@ class PaymentTransitionSerializer(serializers.ModelSerializer):
     @transaction.atomic
     def update(self, instance, validated_data):
         target: PaymentsStatus = validated_data["_target"]
-
         instance.status = target
-        instance.save(update_fields=["status", "updated_at"])
+        instance.save(update_fields=["status"])
 
         if target.payment_status_text.lower() == "verified":
-            paid = RepairsStatus.objects.get(payment_status_text__iexact="paid")
+            paid = RepairsStatus.objects.get(repair_status_text__iexact="paid")
             repair = (
                 RepairOrders.objects
                 .select_for_update()
                 .get(pk=instance.repair_id)
             )
             repair.status = paid
-            repair.save(update_fields=["status", "updated_at"])
-
+            repair.save(update_fields=["status"])
         return instance

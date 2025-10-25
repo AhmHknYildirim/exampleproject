@@ -116,6 +116,27 @@ MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
+# === CELERY SETTINGS ===
+CELERY_BROKER_URL = env("REDIS_URL", default="redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = env("REDIS_URL", default=CELERY_BROKER_URL)
+
+CELERY_TASK_SERIALIZER = "json"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_TASK_TIME_LIMIT = 60
+CELERY_TASK_SOFT_TIME_LIMIT = 50
+
+# for the periodic tasks
+# from celery.schedules import crontab
+# CELERY_BEAT_SCHEDULE = {
+#     "verify-all-completed-repairs-every-5-min": {
+#         "task": "src.apps.payments.tasks.verify_payment_and_mark_repair_paid",
+#         "schedule": 300.0,
+#         "args": (1,),
+#     },
+# }
+
 # === DRF SETTINGS ===
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
